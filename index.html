@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notify-Me-Jokes</title>
+    <link rel="icon" href="icon.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/alertify.css">
+    <style>
+        h1{
+            text-align:center;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/alertify.min.js"></script>
+
+    <h1>Welcome to my website.</h1>
+    <h3>This website provides you jokes as notification.</h3>
+
+    <button onclick="start_function()" id="start_btn">Get Joke</button>
+    <label>Please click to enable notifications.</label>
+    <p>(Please wait some time after clicking for the first time)</p>
+    <br>
+    <br>
+    <button onclick="myStopFunction()" id="stop_btn">Stop Joke</button>
+    <label>Please click to disable notifications.</label>
+
+    
+<script>
+    document.getElementById("stop_btn").disabled = true;
+    function play(){
+    var audio = new Audio('https://samplelib.com/lib/preview/mp3/sample-12s.mp3');
+    getData();
+    audio.play();
+    console.log("Hello");
+    };
+
+    function showNotification(){
+        const notification = new Notification("Welcome to my website.",{
+            body: "Here, you will get jokes as your notification :)"
+        });
+    }
+
+    async function getData(){
+    
+        const response = await fetch("https://icanhazdadjoke.com",{
+         headers: {
+            Accept: "application/json"
+        }});
+  
+        const joke_data = await response.json();
+        const {joke} = joke_data; // Collecting only the joke.
+        var notification = alertify.notify(joke, 'success', 13);
+    }
+
+    function myStopFunction() {
+        document.getElementById("start_btn").disabled = false;
+        document.getElementById("stop_btn").disabled = true;
+        clearInterval(start_);
+        } 
+
+    function start_function(){
+        document.getElementById("start_btn").disabled = true;
+        document.getElementById("stop_btn").disabled = false;
+        start_ = setInterval(play, 18000); // Globalising the variable.
+    }
+    
+
+
+
+    
+    
+
+   //console.log(Notification.permission); // default, granted, denied
+   if (Notification.permission === "granted"){
+    showNotification();
+   }
+
+   else if (Notification.permission !== "denied"){ // If user doesn't click allow or deny, then the value gets stored as default. And when the user reloads tha page, it agains asks for permission (since "default").
+    Notification.requestPermission().then(permission =>{
+        if (permission=="granted"){
+            showNotification();
+        }
+    });
+   }
+</script>
+
+</body>
+</html>
